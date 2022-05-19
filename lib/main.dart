@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'MyHomePage.dart';
+import 'StartPage.dart';
 
 void main() {
   //Get list of available cameras
