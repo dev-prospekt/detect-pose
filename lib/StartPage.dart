@@ -17,7 +17,7 @@ class _StartPageState extends State<StartPage> {
   void initState() {
     super.initState();
     controller = CameraController(
-      widget.cameras![0],
+      widget.cameras![1],
       ResolutionPreset.medium,
     );
     controller.initialize().then((_) {
@@ -38,27 +38,52 @@ class _StartPageState extends State<StartPage> {
       );
     }
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Camera View"),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: SizedBox(
-                height: 500,
-                width: 500,
-                child: CameraPreview(controller),
+        appBar: AppBar(
+          title: const Text('Pushup counter'),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(15, 35, 10, 5),
+                    child: Center(
+                      child: SizedBox(
+                        height: 400,
+                        width: 330,
+                        child: CameraPreview(controller),
+                      ),
+                    ),
+                  )
+                ],
               ),
-            ),
+              Row(children: [
+                Container(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 10, 5),
+                  child: const Text(
+                    'Number of pushups: 0',
+                    style: TextStyle(color: Colors.grey, fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 10, 5),
+                  child: FlatButton(
+                    child: Text(
+                      'START',
+                      style: TextStyle(fontSize: 17.0),
+                    ),
+                    color: Colors.purple.shade200,
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50)),
+                    onPressed: () {},
+                  ),
+                ),
+              ]),
+            ],
           ),
-          const Text(
-            '0',
-            style: TextStyle(color: Colors.grey, fontSize: 20),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }
