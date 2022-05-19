@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-
-import 'dart:async';
-import 'dart:html';
-import "package:image_cropper/image_cropper.dart";
-import 'package:image_picker/image_picker.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -62,16 +56,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 130,
                 height: 60,
                 child: FlatButton(
-                  child: Text(
-                    'START',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                  color: Colors.purple.shade200,
-                  textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
-                  onPressed: () {},
-                ),
+                    child: Text(
+                      'START',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    color: Colors.purple.shade200,
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50)),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/StartPage');
+                    }),
               ),
               Container(
                 margin: EdgeInsets.all(25),
@@ -113,5 +108,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ]));
+  }
+}
+
+class StartPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Welcome"),
+      ),
+    );
   }
 }
