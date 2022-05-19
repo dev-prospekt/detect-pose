@@ -58,17 +58,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 130,
                 height: 60,
                 child: FlatButton(
-                    child: Text(
-                      'START',
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                    color: Colors.purple.shade200,
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/StartPage');
-                    }),
+                  child: Text(
+                    'START',
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  color: Colors.purple.shade200,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50)),
+                  onPressed: () async {
+                    await availableCameras().then(
+                      (value) => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StartPage(
+                            cameras: value,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
               Container(
                 margin: EdgeInsets.all(25),
