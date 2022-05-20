@@ -38,86 +38,108 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         body: Column(children: <Widget>[
-          Row(
-            children: [
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-                child: const Image(
-                  width: 320,
-                  height: 300,
-                  image: NetworkImage(
-                      'https://www.stockhype.ch/wp-content/uploads/2020/06/push_ups_1.jpg'),
-                ),
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 60.0, horizontal: 10.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                    child: Text(
+                  'WELCOME',
+                  style: TextStyle(
+                    fontSize: 50.0,
+                    color: Colors.purple.shade200,
+                  ),
+                  textAlign: TextAlign.center,
+                )),
+              ],
+            ),
           ),
-          Row(
-            children: [
-              Container(
-                margin: EdgeInsets.all(25),
-                width: 130,
-                height: 60,
-                child: FlatButton(
-                  child: Text(
-                    'START',
-                    style: TextStyle(fontSize: 20.0),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                    child: Text(
+                  'Press Start to start the exercise or Info for details on using applications',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    color: Colors.grey,
                   ),
-                  color: Colors.purple.shade200,
-                  textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
-                  onPressed: () async {
-                    await availableCameras().then(
-                      (value) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => StartPage(
-                            cameras: value,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.all(25),
-                width: 130,
-                height: 60,
-                child: FlatButton(
-                  child: Text(
-                    'INFO',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                  color: Colors.purple.shade200,
-                  textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
-                  onPressed: () {
-                    showAboutDialog(
-                      context: context,
-                      applicationName: 'Push-up Counter',
-                      applicationVersion: '0.0.1',
-                      // applicationIcon: const Icon(Icons.info),
-                      applicationLegalese: '© Ivana Cetina | 2022',
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6.0, vertical: 36.0),
-                          child: const Text(
-                            "To use this app, place the phone under your chest and press the start button.\n",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.white,
+                  textAlign: TextAlign.center,
+                )),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 0.0),
+            child: Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(25),
+                  width: 130,
+                  height: 60,
+                  child: FlatButton(
+                    child: Text(
+                      'START',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    color: Colors.purple.shade200,
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50)),
+                    onPressed: () async {
+                      await availableCameras().then(
+                        (value) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StartPage(
+                              cameras: value,
                             ),
                           ),
                         ),
-                      ],
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+                Container(
+                  margin: EdgeInsets.all(25),
+                  width: 130,
+                  height: 60,
+                  child: FlatButton(
+                    child: Text(
+                      'INFO',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    color: Colors.purple.shade200,
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50)),
+                    onPressed: () {
+                      showAboutDialog(
+                        context: context,
+                        applicationName: 'Push-ups Counter',
+                        applicationVersion: '0.0.1',
+                        // applicationIcon: const Icon(Icons.info),
+                        applicationLegalese: '© Ivana Cetina | 2022',
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6.0, vertical: 36.0),
+                            child: const Text(
+                              "To use this app, place the phone in front of your body and press the start button.\n",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ]));
   }

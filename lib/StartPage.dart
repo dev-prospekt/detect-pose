@@ -42,7 +42,7 @@ class _StartPageState extends State<StartPage> {
     }
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Pushup counter'),
+          title: const Text('Pushups counter'),
         ),
         body: Center(
           child: Column(
