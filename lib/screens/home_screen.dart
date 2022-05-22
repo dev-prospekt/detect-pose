@@ -1,6 +1,6 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:pushups_counter2/screens/camera_screen.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:myapp/screens/pose_detector.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,6 +10,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final PoseDetector poseDetector = PoseDetector(options: PoseDetectorOptions());
+  bool canProcess = true;
+  bool isBusy = false;
+
+  @override
+  void dispose() async {
+    canProcess = false;
+    poseDetector.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,20 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await availableCameras().then(
-            (value) => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CameraScreen(
-                  cameras: value,
-                ),
-              ),
-            ),
-          );
+        onPressed: () => {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const PoseDetectorView()  ))
         },
         child: const Text('Start'),
       ),
     );
   }
+
 }

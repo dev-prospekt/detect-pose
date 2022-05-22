@@ -1,7 +1,14 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:pushups_counter2/screens/home_screen.dart';
+import 'package:myapp/screens/home_screen.dart';
 
-void main() {
+List<CameraDescription> cameras = [];
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  cameras = await availableCameras();
+  
   //Get list of available cameras
   runApp(const MyApp());
 }
