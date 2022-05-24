@@ -17,6 +17,8 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   PoseDetectionState get state => Provider.of(context, listen: false);
   final PoseDetector _detector = PoseDetector(isStream: false);
 
+  late bool check, checkNext;
+
   DetectedPose? lastDetectedPose;
 
   @override
@@ -47,6 +49,8 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
         lastDetectedPose = DetectedPose.sitting;
       });
     }
+
+    _novaMetoda(lastDetectedPose);
   }
 
   bool _isCurrentPoseStanding(Map<PoseLandmarkType, PoseLandmark> landmarks) {
@@ -55,28 +59,22 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
     final rightKneeLandmark =
         state.data!.landmarks[PoseLandmarkType.RIGHT_KNEE];
 
+    print('tu sam');
+    print(rightShoulderLandmark!.position.dy);
+    print(rightKneeLandmark!.position.dy);
+
     if (rightShoulderLandmark == null || rightKneeLandmark == null) {
       return false;
     }
     if (rightShoulderLandmark.position.dy < rightKneeLandmark.position.dy) {
       return true;
     }
+
     return false;
   }
 
-  bool _isCurrentPoseSitting(Map<PoseLandmarkType, PoseLandmark> landmarks) {
-    final rightShoulderLandmark =
-        state.data!.landmarks[PoseLandmarkType.RIGHT_SHOULDER];
-    final rightKneeLandmark =
-        state.data!.landmarks[PoseLandmarkType.RIGHT_KNEE];
-
-    if (rightShoulderLandmark == null || rightKneeLandmark == null) {
-      return false;
-    }
-    if (rightShoulderLandmark.position.dy == rightKneeLandmark.position.dy) {
-      return true;
-    }
-    return false;
+  _novaMetoda(lastDetectedPose) {
+    print(lastDetectedPose);
   }
 
   @override
