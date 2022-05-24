@@ -1,7 +1,9 @@
+import 'dart:ffi';
+import 'dart:js';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'PoseDetectionPage.dart';
 
 class StartPage extends StatefulWidget {
@@ -16,60 +18,35 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   late CameraController controller;
 
-  @override
-  void initState() {
-    super.initState();
-    controller = CameraController(
-      widget.cameras![1],
-      ResolutionPreset.medium,
-    );
-    controller.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    });
-  }
+  final int _counter = 0;
 
   @override
   Widget build(BuildContext context) {
-    if (!controller.value.isInitialized) {
-      return const SizedBox(
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+    //if (!controller.value.isInitialized) {
+    //return
+    const SizedBox(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    // }
     return Scaffold(
       body: Column(
         children: [
           Expanded(
             child: ChangeNotifierProvider(
-              create: (_) => PoseDetectionState(),
-              child: PoseDetectionPage(),
-            ),
+                create: (_) => PoseDetectionState(),
+                child: const PoseDetectionPage()),
           ),
-          Row(children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(15, 10, 10, 5),
-              child: const Text(
-                'Number of pushups: 0',
-                style: TextStyle(color: Colors.grey, fontSize: 20),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(15, 10, 10, 5),
-              child: FlatButton(
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Center(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(15, 5, 5, 5),
                 child: Text(
-                  'START',
-                  style: TextStyle(fontSize: 17.0),
+                  "Number of pushups: $_counter",
+                  style: const TextStyle(color: Colors.grey, fontSize: 20),
+                  textAlign: TextAlign.center,
                 ),
-                color: Colors.purple.shade200,
-                textColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)),
-                onPressed: () {},
               ),
             ),
           ]),
