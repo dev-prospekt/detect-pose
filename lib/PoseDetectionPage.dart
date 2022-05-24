@@ -21,6 +21,8 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   PoseDetectionState get state => Provider.of(context, listen: false);
   final PoseDetector _detector = PoseDetector(isStream: false);
 
+  late bool check, checkNext;
+
   DetectedPose? lastDetectedPose;
 
   late bool check, checkNext;
@@ -64,22 +66,33 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
 
     print('tu sam');
     print(rightShoulderLandmark!.position.dy);
+<<<<<<< HEAD
     print(rightHipLandmark!.position.dy);
 
     if (rightShoulderLandmark == null || rightHipLandmark == null) {
+=======
+    print(rightKneeLandmark!.position.dy);
+
+    if (rightShoulderLandmark == null || rightKneeLandmark == null) {
+>>>>>>> 65fc8e5c547cf434b0a93cf3167a4746c8b1ff9c
       return false;
     }
     if ((rightHipLandmark.position.dy > 140) &&
         (rightShoulderLandmark.position.dy < 140)) {
       return true;
     }
+
     return false;
   }
 
   _novaMetoda(lastDetectedPose) {
+<<<<<<< HEAD
     if (lastDetectedPose == 'sitting') {
       //_counter++;
     }
+=======
+    print(lastDetectedPose);
+>>>>>>> 65fc8e5c547cf434b0a93cf3167a4746c8b1ff9c
   }
 
   @override
