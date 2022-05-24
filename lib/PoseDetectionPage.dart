@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:learning_pose_detection/learning_pose_detection.dart';
 import 'package:learning_input_image/learning_input_image.dart';
+import 'StartPage.dart';
 
 enum DetectedPose {
   standing,
@@ -9,6 +11,8 @@ enum DetectedPose {
 }
 
 class PoseDetectionPage extends StatefulWidget {
+  const PoseDetectionPage({Key? key}) : super(key: key);
+
   @override
   _PoseDetectionPageState createState() => _PoseDetectionPageState();
 }
@@ -18,6 +22,8 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   final PoseDetector _detector = PoseDetector(isStream: false);
 
   DetectedPose? lastDetectedPose;
+
+  late bool check, checkNext;
 
   @override
   void dispose() {
@@ -47,36 +53,33 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
         lastDetectedPose = DetectedPose.sitting;
       });
     }
+
+    _novaMetoda(lastDetectedPose);
   }
 
   bool _isCurrentPoseStanding(Map<PoseLandmarkType, PoseLandmark> landmarks) {
     final rightShoulderLandmark =
         state.data!.landmarks[PoseLandmarkType.RIGHT_SHOULDER];
-    final rightKneeLandmark =
-        state.data!.landmarks[PoseLandmarkType.RIGHT_KNEE];
+    final rightHipLandmark = state.data!.landmarks[PoseLandmarkType.RIGHT_HIP];
 
-    if (rightShoulderLandmark == null || rightKneeLandmark == null) {
+    print('tu sam');
+    print(rightShoulderLandmark!.position.dy);
+    print(rightHipLandmark!.position.dy);
+
+    if (rightShoulderLandmark == null || rightHipLandmark == null) {
       return false;
     }
-    if (rightShoulderLandmark.position.dy < rightKneeLandmark.position.dy) {
+    if ((rightHipLandmark.position.dy > 140) &&
+        (rightShoulderLandmark.position.dy < 140)) {
       return true;
     }
     return false;
   }
 
-  bool _isCurrentPoseSitting(Map<PoseLandmarkType, PoseLandmark> landmarks) {
-    final rightShoulderLandmark =
-        state.data!.landmarks[PoseLandmarkType.RIGHT_SHOULDER];
-    final rightKneeLandmark =
-        state.data!.landmarks[PoseLandmarkType.RIGHT_KNEE];
-
-    if (rightShoulderLandmark == null || rightKneeLandmark == null) {
-      return false;
+  _novaMetoda(lastDetectedPose) {
+    if (lastDetectedPose == 'sitting') {
+      //_counter++;
     }
-    if (rightShoulderLandmark.position.dy == rightKneeLandmark.position.dy) {
-      return true;
-    }
-    return false;
   }
 
   @override
