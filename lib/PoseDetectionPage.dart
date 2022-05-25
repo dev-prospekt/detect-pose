@@ -29,7 +29,7 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   // late bool check, checkNext;
   late int _counter = 0;
 
-  DetectedPose? lastDetectedPose;
+  DetectedPose? lastDetectedPose = DetectedPose.standing;
 
   @override
   void dispose() {
@@ -43,10 +43,7 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
       state.data = await _detector.detect(image);
       if (state.data!.landmarks.isNotEmpty) {
         // Debugging
-        developer.log(
-          'Pose',
-          error: _poseLandmarksToJSON(state.data!.landmarks),
-        );
+        //developer.log('Pose', error: _poseLandmarksToJSON(state.data!.landmarks));
 
         _updateMaxStandingHeightDifference(state.data!.landmarks);
         _detectCurrentPose(state.data!.landmarks);
@@ -85,6 +82,14 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
         lastDetectedPose = DetectedPose.standing;
       });
       developer.log('New pose: $lastDetectedPose');
+
+      // Since initial pose = standing - we will not count first standing pose.
+      // Then the pose should go to Sitting (so lastDetectedPose changes)
+      // Then when it again changes from Sitting to Standing - we increment counter
+      setState(() {
+        _counter = _counter + 1;
+      });
+      developer.log('Squat detected!: $lastDetectedPose - $_counter');
     }
     if (lastDetectedPose != DetectedPose.sitting && _isCurrentPoseSitting(landmarks)) {
       setState(() {
@@ -163,39 +168,57 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return InputCameraView(
-      cameraDefault: InputCameraType.rear,
-      title: 'Pose ${lastDetectedPose == DetectedPose.standing ? 'Standing' : 'Sitting'}',
+    return Column(
+      children: [
+        Expanded(
+          child: InputCameraView(
+            cameraDefault: InputCameraType.rear,
+            title: 'Pose ${lastDetectedPose == DetectedPose.standing ? 'Standing' : 'Sitting'}',
 
-      onImage: _detectPose,
-      // resolutionPreset: ResolutionPreset.high,
-      overlay: Consumer<PoseDetectionState>(
-        builder: (_, state, __) {
-          if (state.isEmpty) {
-            return Container();
-          }
+            onImage: _detectPose,
+            // resolutionPreset: ResolutionPreset.high,
+            overlay: Consumer<PoseDetectionState>(
+              builder: (_, state, __) {
+                if (state.isEmpty) {
+                  return Container();
+                }
 
-          Size originalSize = state.size!;
-          Size size = MediaQuery.of(context).size;
+                Size originalSize = state.size!;
+                Size size = MediaQuery.of(context).size;
 
-          // if image source from gallery
-          // image display size is scaled to 360x360 with retaining aspect ratio
-          if (state.notFromLive) {
-            if (originalSize.aspectRatio > 1) {
-              size = Size(360.0, 360.0 / originalSize.aspectRatio);
-            } else {
-              size = Size(360.0 * originalSize.aspectRatio, 360.0);
-            }
-          }
+                // if image source from gallery
+                // image display size is scaled to 360x360 with retaining aspect ratio
+                if (state.notFromLive) {
+                  if (originalSize.aspectRatio > 1) {
+                    size = Size(360.0, 360.0 / originalSize.aspectRatio);
+                  } else {
+                    size = Size(360.0 * originalSize.aspectRatio, 360.0);
+                  }
+                }
 
-          return PoseOverlay(
-            size: size,
-            originalSize: originalSize,
-            rotation: state.rotation,
-            pose: state.data!,
-          );
-        },
-      ),
+                return PoseOverlay(
+                  size: size,
+                  originalSize: originalSize,
+                  rotation: state.rotation,
+                  pose: state.data!,
+                );
+              },
+            ),
+          ),
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Center(
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(15, 5, 5, 5),
+              child: Text(
+                "Number of pushups: $_counter",
+                style: const TextStyle(color: Colors.grey, fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ]),
+      ],
     );
   }
 }

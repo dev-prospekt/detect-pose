@@ -28,27 +28,7 @@ class _StartPageState extends State<StartPage> {
     );
     // }
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: ChangeNotifierProvider(
-                create: (_) => PoseDetectionState(),
-                child: const PoseDetectionPage()),
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Center(
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(15, 5, 5, 5),
-                child: Text(
-                  "Number of pushups: $_counter",
-                  style: const TextStyle(color: Colors.grey, fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ]),
-        ],
-      ),
+      body: ChangeNotifierProvider(create: (_) => PoseDetectionState(), child: const PoseDetectionPage()),
     );
   }
 }
