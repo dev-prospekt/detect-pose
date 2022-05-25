@@ -23,6 +23,9 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   PoseDetectionState get state => Provider.of(context, listen: false);
   final PoseDetector _detector = PoseDetector(isStream: false);
 
+  // Maximum difference between LEFT_MOUTH and LEFT_KNEE (to justify standing pose);
+  int? _maxStandingHeightDifference = null;
+
   // late bool check, checkNext;
   late int _counter = 0;
 
@@ -39,15 +42,30 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
       state.image = image;
       state.data = await _detector.detect(image);
       if (state.data!.landmarks.isNotEmpty) {
+        _updateMaxStandingHeightDifference(state.data!.landmarks);
         _detectCurrentPose(state.data!.landmarks);
       }
       state.stopProcessing();
     }
   }
 
+  void _updateMaxStandingHeightDifference(Map<PoseLandmarkType, PoseLandmark> landmarks) {
+    if (state.data!.landmarks[PoseLandmarkType.LEFT_MOUTH] == null || state.data!.landmarks[PoseLandmarkType.LEFT_KNEE] == null) {
+      return;
+    }
+    final leftMouthY = state.data!.landmarks[PoseLandmarkType.LEFT_MOUTH]!.position.dy;
+    final leftKneeY = state.data!.landmarks[PoseLandmarkType.LEFT_KNEE]!.position.dy;
+
+    if (_maxStandingHeightDifference == null || leftKneeY - leftMouthY > _maxStandingHeightDifference!) {
+      setState(() {
+        _maxStandingHeightDifference = leftKneeY.toInt() - leftMouthY.toInt();
+      });
+      developer.log('Detected new max person height: $_maxStandingHeightDifference');
+    }
+  }
+
   void _detectCurrentPose(Map<PoseLandmarkType, PoseLandmark> landmarks) {
-    if (_isCurrentPoseStanding(landmarks) &&
-        lastDetectedPose != DetectedPose.standing) {
+    if (_isCurrentPoseStanding(landmarks) && lastDetectedPose != DetectedPose.standing) {
       setState(() {
         lastDetectedPose = DetectedPose.standing;
       });
@@ -85,8 +103,7 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   }
 
   bool _isCurrentPoseStanding(Map<PoseLandmarkType, PoseLandmark> landmarks) {
-    final rightShoulderLandmark =
-        state.data!.landmarks[PoseLandmarkType.RIGHT_SHOULDER];
+    final rightShoulderLandmark = state.data!.landmarks[PoseLandmarkType.RIGHT_SHOULDER];
     final rightHipLandmark = state.data!.landmarks[PoseLandmarkType.RIGHT_HIP];
 
     developer.log(
@@ -97,8 +114,7 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
     if (rightShoulderLandmark == null || rightHipLandmark == null) {
       return false;
     }
-    if ((rightHipLandmark.position.dy > 140) &&
-        (rightShoulderLandmark.position.dy < 140)) {
+    if ((rightHipLandmark.position.dy > 140) && (rightShoulderLandmark.position.dy < 140)) {
       return true;
     }
 
@@ -115,8 +131,7 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   Widget build(BuildContext context) {
     return InputCameraView(
       cameraDefault: InputCameraType.rear,
-      title:
-          'Pose ${lastDetectedPose == DetectedPose.standing ? 'Standing' : 'Sitting'}',
+      title: 'Pose ${lastDetectedPose == DetectedPose.standing ? 'Standing' : 'Sitting'}',
 
       onImage: _detectPose,
       // resolutionPreset: ResolutionPreset.high,
