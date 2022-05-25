@@ -24,7 +24,7 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   final PoseDetector _detector = PoseDetector(isStream: false);
 
   // Maximum difference between LEFT_MOUTH and LEFT_KNEE (to justify standing pose);
-  int? _maxStandingHeightDifference = null;
+  int? _maxStandingHeightDifference;
 
   // late bool check, checkNext;
   late int _counter = 0;
@@ -42,6 +42,12 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
       state.image = image;
       state.data = await _detector.detect(image);
       if (state.data!.landmarks.isNotEmpty) {
+        // Debugging
+        developer.log(
+          'Pose',
+          error: _poseLandmarksToJSON(state.data!.landmarks),
+        );
+
         _updateMaxStandingHeightDifference(state.data!.landmarks);
         _detectCurrentPose(state.data!.landmarks);
       }
@@ -49,33 +55,43 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
     }
   }
 
+  int? _getHeightDifference(PoseLandmarkType point1, PoseLandmarkType point2, Map<PoseLandmarkType, PoseLandmark> landmarks) {
+    if (state.data!.landmarks[point1] == null || state.data!.landmarks[point2] == null) {
+      return null;
+    }
+    final point1Y = state.data!.landmarks[point1]!.position.dy.toInt();
+    final point2Y = state.data!.landmarks[point2]!.position.dy.toInt();
+
+    return (point1Y - point2Y).abs();
+  }
+
   void _updateMaxStandingHeightDifference(Map<PoseLandmarkType, PoseLandmark> landmarks) {
-    if (state.data!.landmarks[PoseLandmarkType.LEFT_MOUTH] == null || state.data!.landmarks[PoseLandmarkType.LEFT_KNEE] == null) {
+    final heightDifference = _getHeightDifference(PoseLandmarkType.LEFT_MOUTH, PoseLandmarkType.LEFT_KNEE, landmarks);
+    if (heightDifference == null) {
       return;
     }
-    final leftMouthY = state.data!.landmarks[PoseLandmarkType.LEFT_MOUTH]!.position.dy;
-    final leftKneeY = state.data!.landmarks[PoseLandmarkType.LEFT_KNEE]!.position.dy;
 
-    if (_maxStandingHeightDifference == null || leftKneeY - leftMouthY > _maxStandingHeightDifference!) {
+    if (_maxStandingHeightDifference == null || heightDifference > _maxStandingHeightDifference!) {
       setState(() {
-        _maxStandingHeightDifference = leftKneeY.toInt() - leftMouthY.toInt();
+        _maxStandingHeightDifference = heightDifference;
       });
       developer.log('Detected new max person height: $_maxStandingHeightDifference');
     }
   }
 
   void _detectCurrentPose(Map<PoseLandmarkType, PoseLandmark> landmarks) {
-    if (_isCurrentPoseStanding(landmarks) && lastDetectedPose != DetectedPose.standing) {
+    if (lastDetectedPose != DetectedPose.standing && _isCurrentPoseStanding(landmarks)) {
       setState(() {
         lastDetectedPose = DetectedPose.standing;
       });
-    } else {
+      developer.log('New pose: $lastDetectedPose');
+    }
+    if (lastDetectedPose != DetectedPose.sitting && _isCurrentPoseSitting(landmarks)) {
       setState(() {
         lastDetectedPose = DetectedPose.sitting;
       });
+      developer.log('New pose: $lastDetectedPose');
     }
-
-    _novaMetoda(lastDetectedPose);
   }
 
   String _poseLandmarksToJSON(Map<PoseLandmarkType, PoseLandmark> landmarks) {
@@ -103,28 +119,46 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
   }
 
   bool _isCurrentPoseStanding(Map<PoseLandmarkType, PoseLandmark> landmarks) {
-    final rightShoulderLandmark = state.data!.landmarks[PoseLandmarkType.RIGHT_SHOULDER];
-    final rightHipLandmark = state.data!.landmarks[PoseLandmarkType.RIGHT_HIP];
-
-    developer.log(
-      'Pose',
-      error: _poseLandmarksToJSON(landmarks),
-    );
-
-    if (rightShoulderLandmark == null || rightHipLandmark == null) {
+    // Let's assume current pose is standing IF:
+    // Distance between mouth and knee is max (-10%) - _maxStandingHeightDifference
+    final heightDifference = _getHeightDifference(PoseLandmarkType.LEFT_MOUTH, PoseLandmarkType.LEFT_KNEE, landmarks);
+    if (heightDifference == null || _maxStandingHeightDifference == null) {
       return false;
     }
-    if ((rightHipLandmark.position.dy > 140) && (rightShoulderLandmark.position.dy < 140)) {
+
+    // 1 - 10% = 1 - 0.1 = 0.9
+    if (heightDifference / _maxStandingHeightDifference! > 0.9) {
       return true;
     }
 
     return false;
   }
 
-  _novaMetoda(lastDetectedPose) {
-    if (lastDetectedPose == 'sitting') {
-      _counter++;
+  bool _isCurrentPoseSitting(Map<PoseLandmarkType, PoseLandmark> landmarks) {
+    // Let's assume current pose is sitting IF:
+    // Distance between mouth and knee is less than 70% of max - _maxStandingHeightDifference
+    // AND distance between hip and knee is approximately same (10% tolerance)
+    final heightDifference = _getHeightDifference(PoseLandmarkType.LEFT_MOUTH, PoseLandmarkType.LEFT_KNEE, landmarks);
+    if (heightDifference == null || _maxStandingHeightDifference == null) {
+      return false;
     }
+
+    final hipKneeDifference = _getHeightDifference(PoseLandmarkType.LEFT_HIP, PoseLandmarkType.LEFT_KNEE, landmarks);
+    if (hipKneeDifference == null) {
+      return false;
+    }
+
+    if (heightDifference / _maxStandingHeightDifference! > 0.7) {
+      return false;
+    }
+
+    if (state.data!.landmarks[PoseLandmarkType.LEFT_HIP] == null || state.data!.landmarks[PoseLandmarkType.LEFT_KNEE] == null) {
+      return false;
+    }
+    final point1Y = state.data!.landmarks[PoseLandmarkType.LEFT_HIP]!.position.dy.toInt();
+    final point2Y = state.data!.landmarks[PoseLandmarkType.LEFT_KNEE]!.position.dy.toInt();
+
+    return (point1Y / point2Y < 1.1 && point1Y / point2Y > 0.9);
   }
 
   @override
