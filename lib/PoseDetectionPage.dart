@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:learning_pose_detection/learning_pose_detection.dart';
 import 'package:learning_input_image/learning_input_image.dart';
-import 'StartPage.dart';
+import 'dart:developer' as developer;
 
 enum DetectedPose {
   standing,
@@ -58,14 +60,39 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
     _novaMetoda(lastDetectedPose);
   }
 
+  String _poseLandmarksToJSON(Map<PoseLandmarkType, PoseLandmark> landmarks) {
+    final obj = {};
+    final whitelist = [
+      PoseLandmarkType.LEFT_ANKLE,
+      PoseLandmarkType.LEFT_MOUTH,
+      PoseLandmarkType.LEFT_HIP,
+      PoseLandmarkType.LEFT_KNEE,
+      PoseLandmarkType.LEFT_SHOULDER,
+    ];
+    landmarks.forEach((key, value) {
+      if (whitelist.contains(key)) {
+        obj[key.toString()] = {
+          'direction': value.position.direction,
+          'distance': value.position.distance,
+          'distanceSquared': value.position.distanceSquared,
+          'dx': value.position.dx,
+          'dy': value.position.dy,
+        };
+      }
+    });
+
+    return jsonEncode(obj);
+  }
+
   bool _isCurrentPoseStanding(Map<PoseLandmarkType, PoseLandmark> landmarks) {
     final rightShoulderLandmark =
         state.data!.landmarks[PoseLandmarkType.RIGHT_SHOULDER];
     final rightHipLandmark = state.data!.landmarks[PoseLandmarkType.RIGHT_HIP];
 
-    print('tu sam');
-    print(rightShoulderLandmark!.position.dy);
-    print(rightHipLandmark!.position.dy);
+    developer.log(
+      'Pose',
+      error: _poseLandmarksToJSON(landmarks),
+    );
 
     if (rightShoulderLandmark == null || rightHipLandmark == null) {
       return false;
