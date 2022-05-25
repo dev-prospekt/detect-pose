@@ -16,7 +16,7 @@ packages:
     source: hosted
     version: "2.1.0"
   camera:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: camera
       url: "https://pub.dartlang.org"
@@ -30,7 +30,7 @@ packages:
     source: hosted
     version: "2.1.6"
   camera_web:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: camera_web
       url: "https://pub.dartlang.org"
