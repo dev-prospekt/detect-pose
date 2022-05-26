@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'MyHomePage.dart';
+import 'login.dart';
 
 void main() {
   //Get list of available cameras
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         primarySwatch: Colors.grey,
       ),
-      home: const MyHomePage(title: 'PUSHUPS COUNTER'),
+      home: const LoginPage(title: 'Login UI'),
       //routes: <String, WidgetBuilder>{
       // '/StartPage': (context) => StartPage()
       //}

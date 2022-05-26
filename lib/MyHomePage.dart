@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:pushups_counter2/Dashboard2.dart';
 import 'StartPage.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -85,18 +86,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     color: Colors.purple.shade200,
                     textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                     onPressed: () async {
-                      await availableCameras().then(
-                        (value) => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StartPage(
-                              cameras: value,
-                            ),
-                          ),
-                        ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MyDashboard(
+                                  title: 'DASHBOARD',
+                                )),
                       );
                     },
                   ),
@@ -112,8 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     color: Colors.purple.shade200,
                     textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                     onPressed: () {
                       showAboutDialog(
                         context: context,
@@ -123,8 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         applicationLegalese: '© Ivana Cetina | 2022',
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6.0, vertical: 36.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 36.0),
                             child: const Text(
                               "To use this app, place the phone in front of your body and press the start button.\n",
                               style: TextStyle(
