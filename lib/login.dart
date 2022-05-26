@@ -12,7 +12,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  var rememberValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,37 +68,41 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(25),
-                        width: 130,
-                        height: 60,
-                        child: FlatButton(
-                          child: Text(
-                            'LOG IN',
-                            style: TextStyle(fontSize: 20.0),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(25),
+                          width: 100,
+                          height: 50,
+                          child: FlatButton(
+                            child: Text(
+                              'LOG IN',
+                              style: TextStyle(fontSize: 15.0),
+                            ),
+                            color: Colors.purple.shade200,
+                            textColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const MyHomePage(
+                                            title: 'DASHBOARD',
+                                          )),
+                                );
+                              }
+                            },
                           ),
-                          color: Colors.purple.shade200,
-                          textColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                          onPressed: () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MyHomePage(
-                                        title: 'DASHBOARD',
-                                      )),
-                            );
-                          },
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -102,6 +102,7 @@ class _PoseDetectionPageState extends State<PoseDetectionPage> {
     final obj = {};
     final whitelist = [
       PoseLandmarkType.LEFT_ANKLE,
+      PoseLandmarkType.LEFT_THUMB,
       PoseLandmarkType.LEFT_MOUTH,
       PoseLandmarkType.LEFT_HIP,
       PoseLandmarkType.LEFT_KNEE,
